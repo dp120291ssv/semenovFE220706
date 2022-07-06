@@ -1,26 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useCallback, useEffect, useState} from 'react';
 import './App.css';
+import ChartBar from "./components/ChartBar";
+import data from './utils/utilsObj'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const [isCustom, setIsCustom] = useState(false);
+    const [customCompleted, setCustomCompleted] = useState(0);
+
+    const handleChangeData = useCallback(() => {
+        setIsCustom(true);
+        setCustomCompleted(Math.floor(Math.random() * 100) + 0.1)
+    }, [])
+
+    useEffect(() => {
+        if (isCustom) {
+            setInterval(() => setCustomCompleted(Math.floor(Math.random() * 100) + 0.1), 30000);
+        }
+    }, [isCustom])
+
+    const title = {
+        display: 'flex',
+        justifyContent: 'flex-start'
+    }
+
+    const root = {
+        padding: '50px'
+    }
+
+    const calcPercent = (time: any) => {
+        return Math.floor(time * 100 / 18.4) + 0.1;
+    }
+
+    return (
+        <>
+            <div style={root}>
+                <div>
+                    <div>
+                        <div style={title}>SPENT TIME (SECONDS)</div>
+                        {data.map(item => {
+                           return  <ChartBar bgColor={"#a1dad9"} completed={calcPercent(item.time)} isCustom={isCustom}
+                                             customCompleted={customCompleted} itemTitle={item.name}/>
+                        })}
+                    </div>
+                    <button onClick={handleChangeData}>Click Me</button>
+                </div>
+            </div>
+        </>
+    );
 }
 
 export default App;
